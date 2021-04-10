@@ -2,15 +2,12 @@ package io.augies.menumeapp.service
 
 import groovy.util.logging.Slf4j
 import io.augies.menumeapp.model.*
-import io.augies.menumeapp.model.filtering.FilterType
-import io.augies.menumeapp.model.filtering.specification.RestaurantSpecBuilder
+import io.augies.menumeapp.model.Restaurant.CostLevel
+import io.augies.menumeapp.model.Restaurant.FoodCategory
 import io.augies.menumeapp.model.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 @Service
 @Slf4j
@@ -25,55 +22,6 @@ class DatabaseService {
     DietaryRestrictionRepository dietaryRestrictionRepository
     @Autowired
     ItemRestrictionRepository itemRestrictionRepository
-
-    /**
-     * https://www.baeldung.com/rest-api-search-language-spring-data-specifications
-     * @param search the search string
-     * @return restaurants matching the search
-     */
-    ResponseEntity<List<Restaurant>> searchRestaurants(String search) {
-        if (!search) return getAllRestaurants()
-        RestaurantSpecBuilder builder = new RestaurantSpecBuilder()
-        Pattern pattern = Pattern.compile("(\\w+?)(<>|<:|>:|!:|:|<|>)(\\w+?),")
-        Matcher matcher = pattern.matcher(search + ",")
-        while (matcher.find()) {
-            FilterType filterType = FilterType.getBySymbol(matcher.group(2))
-            String value = matcher.group(3)
-            if (filterType == FilterType.CONTAINS) {
-                value = "%$value%"
-            }
-            builder.with(matcher.group(1), filterType, value)
-        }
-        List<Restaurant> restaurantList = restaurantRepository.findAll(builder.build())
-        if (restaurantList.isEmpty()) {
-            return ResponseEntity.notFound().build()
-        }
-        return ResponseEntity.ok(restaurantList)
-    }
-
-    ResponseEntity<List<Menu>> searchMenus(String search){
-        //TODO
-        if(!search) return getAllMenus()
-        return null
-    }
-
-    ResponseEntity<List<Item>> searchItems(String search){
-        //TODO
-        if(!search) return getAllItems()
-        return null
-    }
-
-    ResponseEntity<List<DietaryRestriction>> searchDietaryRestrictions(String search){
-        //TODO
-        if(!search) return getAllDietaryRestrictions()
-        return null
-    }
-
-    ResponseEntity<List<ItemRestriction>> searchItemRestrictions(String search){
-        //TODO
-        if(!search) return getAllItemRestrictions()
-        return null
-    }
 
     ResponseEntity<List<Restaurant>> getAllRestaurants() {
         List<Restaurant> restaurantList = restaurantRepository.findAll().collect({it})
@@ -113,5 +61,40 @@ class DatabaseService {
             return ResponseEntity.notFound().build()
         }
         return ResponseEntity.ok(itemRestrictionList)
+    }
+
+    ResponseEntity<List<Restaurant>> getRestaurants(
+            List<Long> dietaryRestrictionIds,
+            String name,
+            CostLevel costLevel,
+            Double distance,
+            FoodCategory foodCategory,
+            Menu.MealTime mealTime
+    ){
+        List<Restaurant> restaurants = restaurantRepository.findAll()
+        if(dietaryRestrictionIds) restaurants = restaurantRepository.findByDietaryRestrictions(dietaryRestrictionIds, restaurants)
+        if(name) restaurants = restaurantRepository.findByRestaurantsByName(name, restaurants)
+        if(costLevel) restaurants = restaurantRepository.findByRestaurantsByCost(costLevel.value, restaurants)
+        if(distance) restaurants = restaurantRepository.findByRestaurantsByDistance(distance, restaurants)
+        if(foodCategory) restaurants = restaurantRepository.findByRestaurantsByCategory(foodCategory, restaurants)
+        if(mealTime) restaurants = restaurantRepository.findByRestaurantsByMealTime(mealTime, restaurants)
+
+        for(restaurant in restaurants){
+            for(int i = 0; i < restaurant.menus.size(); i++){
+                Menu menu = restaurant.menus[i]
+                for(int j = 0; j < restaurant.menus[i].items.size(); j++){
+                    Item item = menu.items[j]
+                    if(dietaryRestrictionIds && Collections.disjoint(item.itemRestrictions,itemRestrictionRepository.findAllById(dietaryRestrictionIds))){
+                        menu.items.remove(item)
+                        j--
+                    }
+                }
+                if(menu.items.isEmpty() || menu.mealTime!=mealTime){
+                    restaurant.menus.remove(menu)
+                    i--
+                }
+            }
+        }
+        return ResponseEntity.ok(restaurants)
     }
 }

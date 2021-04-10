@@ -1,5 +1,6 @@
 package io.augies.menumeapp.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.ToString
 
 import javax.persistence.*
@@ -16,7 +17,10 @@ class Menu {
     MealTime mealTime
     @ManyToOne
     @JoinColumn(name = "restaurantId", nullable = false)
+    @JsonIgnore
     Restaurant restaurant
+    @OneToMany(mappedBy='menu')
+    Set<Item> items
 
     enum MealTime {
         BREAKFAST, LUNCH, DINNER, MISCELLANEOUS

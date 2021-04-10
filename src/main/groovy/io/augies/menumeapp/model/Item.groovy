@@ -1,5 +1,6 @@
 package io.augies.menumeapp.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.ToString
 
 import javax.persistence.*
@@ -16,7 +17,10 @@ class Item {
     String description
     @ManyToOne
     @JoinColumn(name = 'menuId', nullable = false)
+    @JsonIgnore
     Menu menu
     Double cost
     Double calories
+    @OneToMany(mappedBy = 'item')
+    Set<ItemRestriction> itemRestrictions
 }

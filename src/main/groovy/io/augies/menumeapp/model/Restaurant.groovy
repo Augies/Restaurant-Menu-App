@@ -26,9 +26,8 @@ class Restaurant {
     FoodCategory foodCategory
     Double distance
     String phoneNumber
-    @ElementCollection
-    @Formula("(SELECT name FROM menume.dietaryrestriction WHERE id IN (SELECT dietaryRestrictionId FROM menume.itemrestriction WHERE itemId IN (SELECT id FROM menume.item WHERE menuId IN (SELECT id FROM menume.menu WHERE menu.id = id))))")
-    List<String> dietaryRestrictions
+    @OneToMany(mappedBy = 'restaurant')
+    Set<Menu> menus
 
     enum CostLevel {
         LOW(0), MEDIUM(1), HIGH(2)

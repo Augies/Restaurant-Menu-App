@@ -1,5 +1,6 @@
 package io.augies.menumeapp.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.ToString
 
 import javax.persistence.*
@@ -14,6 +15,7 @@ class ItemRestriction {
 
     @ManyToOne
     @JoinColumn(name = 'itemId', nullable = false)
+    @JsonIgnore
     Item item
 
     @ManyToOne

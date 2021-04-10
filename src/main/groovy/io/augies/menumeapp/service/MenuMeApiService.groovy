@@ -4,7 +4,9 @@ import io.augies.menumeapp.model.DietaryRestriction
 import io.augies.menumeapp.model.Item
 import io.augies.menumeapp.model.ItemRestriction
 import io.augies.menumeapp.model.Menu
+import io.augies.menumeapp.model.Menu.MealTime
 import io.augies.menumeapp.model.Restaurant
+import io.augies.menumeapp.model.Restaurant.FoodCategory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,27 +21,34 @@ class MenuMeApiService {
     DatabaseService databaseService
 
     @GetMapping("/restaurants")
-    ResponseEntity<List<Restaurant>> getRestaurants(@RequestParam(required = false) String search) {
-        databaseService.searchRestaurants(search)
+    ResponseEntity<List<Restaurant>> getRestaurants(
+            @RequestParam(required=false) List<Long> dietaryRestrictionIds,
+            @RequestParam(required=false) String name,
+            @RequestParam(required=false) Restaurant.CostLevel costLevel,
+            @RequestParam(required=false) Double distance,
+            @RequestParam(required=false) FoodCategory foodCategory,
+            @RequestParam(required=false) MealTime mealTime
+    ){
+        return databaseService.getRestaurants(dietaryRestrictionIds,name,costLevel,distance,foodCategory,mealTime)
     }
 
     @GetMapping("/menus")
-    ResponseEntity<List<Menu>> getMenus(@RequestParam(required=false)String search){
-        databaseService.searchMenus(search)
+    ResponseEntity<List<Menu>> getMenus(){
+        databaseService.getAllMenus()
     }
 
     @GetMapping("/items")
-    ResponseEntity<List<Item>> getItems(@RequestParam(required = false)String search){
-        databaseService.searchItems(search)
+    ResponseEntity<List<Item>> getItems(){
+        databaseService.getAllItems()
     }
 
     @GetMapping("/dietary-restrictions")
-    ResponseEntity<List<DietaryRestriction>> getDietaryRestrictions(@RequestParam(required=false)String search){
-        databaseService.searchDietaryRestrictions(search)
+    ResponseEntity<List<DietaryRestriction>> getDietaryRestrictions(){
+        databaseService.getAllDietaryRestrictions()
     }
 
     @GetMapping("/item-restrictions")
-    ResponseEntity<List<ItemRestriction>> getItemRestrictions(@RequestParam(required=false)String search){
-        databaseService.searchItemRestrictions(search)
+    ResponseEntity<List<ItemRestriction>> getItemRestrictions(){
+        databaseService.getAllItemRestrictions()
     }
 }
