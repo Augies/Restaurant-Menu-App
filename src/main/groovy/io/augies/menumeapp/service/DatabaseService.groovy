@@ -1,18 +1,10 @@
 package io.augies.menumeapp.service
 
 import groovy.util.logging.Slf4j
-import io.augies.menumeapp.model.DietaryRestriction
-import io.augies.menumeapp.model.Item
-import io.augies.menumeapp.model.ItemRestriction
-import io.augies.menumeapp.model.Menu
-import io.augies.menumeapp.model.Restaurant
+import io.augies.menumeapp.model.*
 import io.augies.menumeapp.model.filtering.FilterType
 import io.augies.menumeapp.model.filtering.specification.RestaurantSpecBuilder
-import io.augies.menumeapp.model.repository.DietaryRestrictionRepository
-import io.augies.menumeapp.model.repository.ItemRepository
-import io.augies.menumeapp.model.repository.ItemRestrictionRepository
-import io.augies.menumeapp.model.repository.MenuRepository
-import io.augies.menumeapp.model.repository.RestaurantRepository
+import io.augies.menumeapp.model.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -39,91 +31,91 @@ class DatabaseService {
      * @param search the search string
      * @return restaurants matching the search
      */
-    ResponseEntity<List<Restaurant>> searchRestaurants(String search){
-        if(!search) return getAllRestaurants()
+    ResponseEntity<List<Restaurant>> searchRestaurants(String search) {
+        if (!search) return getAllRestaurants()
         RestaurantSpecBuilder builder = new RestaurantSpecBuilder()
         Pattern pattern = Pattern.compile("(\\w+?)(<>|<:|>:|!:|:|<|>)(\\w+?),")
         Matcher matcher = pattern.matcher(search + ",")
         while (matcher.find()) {
             FilterType filterType = FilterType.getBySymbol(matcher.group(2))
             String value = matcher.group(3)
-            if(filterType==FilterType.CONTAINS){
+            if (filterType == FilterType.CONTAINS) {
                 value = "%$value%"
             }
             builder.with(matcher.group(1), filterType, value)
         }
         List<Restaurant> restaurantList = restaurantRepository.findAll(builder.build())
-        if(restaurantList.isEmpty()){
+        if (restaurantList.isEmpty()) {
             return ResponseEntity.notFound().build()
         }
         return ResponseEntity.ok(restaurantList)
     }
 
-    ResponseEntity<List<Restaurant>> getAllRestaurants(){
+    ResponseEntity<List<Restaurant>> getAllRestaurants() {
         List<Restaurant> restaurantList = restaurantRepository.findAll()
-        if(restaurantList.isEmpty()){
+        if (restaurantList.isEmpty()) {
             return ResponseEntity.notFound().build()
         }
         return ResponseEntity.ok(restaurantList)
     }
 
-    List<Menu> getAllMenus(){
+    List<Menu> getAllMenus() {
         return menuRepository.findAll()
     }
 
-    List<Item> getAllItems(){
+    List<Item> getAllItems() {
         return itemRepository.findAll()
     }
 
-    ResponseEntity<String> addRestaurant(Restaurant restaurant){
-        try{
+    ResponseEntity<String> addRestaurant(Restaurant restaurant) {
+        try {
             restaurantRepository.save(restaurant)
             log.info("Saving restaurant: $restaurant")
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("An exception occurred while creating a restaurant: ", e)
             return ResponseEntity.badRequest().body("Failed to create restaurant")
         }
         return ResponseEntity.ok("Restaurant saved.")
     }
 
-    ResponseEntity<String> addMenu(Menu menu){
-        try{
+    ResponseEntity<String> addMenu(Menu menu) {
+        try {
             menuRepository.save(menu)
             log.info("Saving menu: $menu")
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("An exception occurred while creating a menu: ", e)
             return ResponseEntity.badRequest().body("Failed to create Menu")
         }
         return ResponseEntity.ok("Menu saved.")
     }
 
-    ResponseEntity<String> addItem(Item item){
-        try{
+    ResponseEntity<String> addItem(Item item) {
+        try {
             itemRepository.save(item)
             log.info("Saving item: $item")
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("An exception occurred while creating an item: ", e)
             return ResponseEntity.badRequest().body("Failed to create Item")
         }
         return ResponseEntity.ok("Item saved.")
     }
 
-    ResponseEntity<String> addDietaryRestriction(DietaryRestriction dietaryRestriction){
-        try{
+    ResponseEntity<String> addDietaryRestriction(DietaryRestriction dietaryRestriction) {
+        try {
             dietaryRestrictionRepository.save(dietaryRestriction)
             log.info("Saving dietaryRestriction: $dietaryRestriction")
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("An exception occurred while creating a dietary restriction:", e)
             return ResponseEntity.badRequest().body("Failed to create Dietary Restriction")
         }
         return ResponseEntity.ok("Dietary Restriction saved.")
     }
 
-    ResponseEntity<String> addItemRestriction(ItemRestriction itemRestriction){
-        try{
+    ResponseEntity<String> addItemRestriction(ItemRestriction itemRestriction) {
+        try {
             itemRestrictionRepository.save(itemRestriction)
             log.info("Saving item restriction: $itemRestriction")
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("An exception occurred while creating a item restriction:", e)
             return ResponseEntity.badRequest().body("Failed to create Item Restriction")
         }

@@ -2,17 +2,8 @@ package io.augies.menumeapp.model
 
 import groovy.transform.ToString
 import org.hibernate.annotations.Formula
-import org.springframework.boot.configurationprocessor.json.JSONObject
 
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = 'restaurant')
@@ -27,7 +18,9 @@ class Restaurant {
     String location
     String logoUrl
     String websiteUrl
-    @Enumerated(EnumType.STRING)
+    @Basic
+    Integer costLevelValue //https://www.baeldung.com/jpa-persisting-enums-in-jpa
+    @Transient
     CostLevel costLevel
     @Enumerated(EnumType.STRING)
     FoodCategory foodCategory
@@ -38,10 +31,25 @@ class Restaurant {
     List<String> dietaryRestrictions
 
     enum CostLevel {
-        LOW,MEDIUM,HIGH
+        LOW(0), MEDIUM(1), HIGH(2)
+
+        int value
+
+        CostLevel(int value){
+            this.value = value
+        }
+
+        static CostLevel of(int value){
+            for(costLevel in values()){
+                if(costLevel.value == value){
+                    return costLevel
+                }
+            }
+            return null
+        }
     }
 
     enum FoodCategory {
-        CHINESE,BBQ,PIZZA,ITALIAN,MISCELLANEOUS,AMERICAN,MEXICAN
+        CHINESE, BBQ, PIZZA, ITALIAN, MISCELLANEOUS, AMERICAN, MEXICAN
     }
 }

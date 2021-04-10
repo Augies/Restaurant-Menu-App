@@ -9,30 +9,30 @@ import java.util.stream.Collectors
 
 /**
  * https://www.baeldung.com/rest-api-search-language-spring-data-specifications
- * @param <T> the type of the object being filtered
+ * @param < T >  the type of the object being filtered
  */
 class RestaurantSpecBuilder {
     List<SearchCriteria> params = new ArrayList<>()
 
-    RestaurantSpecBuilder with(String field, FilterType filterType, Object value){
+    RestaurantSpecBuilder with(String field, FilterType filterType, Object value) {
         params.add(new SearchCriteria(field: field, value: value, filterType: filterType))
         return this
     }
 
-    Specification<Restaurant> build(){
+    Specification<Restaurant> build() {
         if (params.size() == 0) {
-            return null;
+            return null
         }
 
         List<Specification> specs = params.stream()
                 .map(RestaurantSpec.&new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
 
-        Specification result = specs.get(0);
+        Specification result = specs.get(0)
 
         for (int i = 1; i < params.size(); i++) {
-            result = Specification.where(result) & (specs.get(i));
+            result = Specification.where(result) & (specs.get(i))
         }
-        return result;
+        return result
     }
 }

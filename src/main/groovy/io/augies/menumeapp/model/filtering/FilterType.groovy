@@ -11,13 +11,13 @@ enum FilterType {
 
     String symbol
 
-    FilterType(String symbol){
+    FilterType(String symbol) {
         this.symbol = symbol
     }
 
-    static FilterType getBySymbol(String symbol){
-        for(filter in values()){
-            if(filter.symbol == symbol){
+    static FilterType getBySymbol(String symbol) {
+        for (filter in values()) {
+            if (filter.symbol == symbol) {
                 return filter
             }
         }

@@ -5,24 +5,20 @@ import io.augies.menumeapp.model.filtering.FilterType
 import io.augies.menumeapp.model.filtering.SearchCriteria
 import org.springframework.data.jpa.domain.Specification
 
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Path
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
+import javax.persistence.criteria.*
 
 /**
  * https://www.baeldung.com/rest-api-search-language-spring-data-specifications
- * @param <T> the type of object that is filtered
+ * @param < T >  the type of object that is filtered
  */
 class RestaurantSpec implements Specification<Restaurant> {
     SearchCriteria criteria
 
     @Override
     Predicate toPredicate(Root<Restaurant> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        Path<String> field = root.<String>get(criteria.field)
+        Path<String> field = root.<String> get(criteria.field)
 
-        switch(criteria.filterType){
+        switch (criteria.filterType) {
             case FilterType.GREATER:
                 return cb.greaterThan(field, criteria.getValue().toString())
             case FilterType.LESS:

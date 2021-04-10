@@ -2,18 +2,10 @@ package io.augies.menumeapp.model
 
 import groovy.transform.ToString
 
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
-@Table(name ='menu')
+@Table(name = 'menu')
 @ToString(includeNames = true)
 class Menu {
     @Id
@@ -23,10 +15,10 @@ class Menu {
     @Enumerated(EnumType.STRING)
     MealTime mealTime
     @ManyToOne
-    @JoinColumn(name="restaurantId", nullable=false)
+    @JoinColumn(name = "restaurantId", nullable = false)
     Restaurant restaurant
 
     enum MealTime {
-        BREAKFAST,LUNCH,DINNER,MISCELLANEOUS
+        BREAKFAST, LUNCH, DINNER, MISCELLANEOUS
     }
 }

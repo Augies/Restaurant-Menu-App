@@ -21,32 +21,32 @@ class MenuMeApiService {
     DatabaseService databaseService
 
     @GetMapping("/restaurants")
-    ResponseEntity<List<Restaurant>> getRestaurants(@RequestParam(required = false) String search){
-            databaseService.searchRestaurants(search)
+    ResponseEntity<List<Restaurant>> getRestaurants(@RequestParam(required = false) String search) {
+        databaseService.searchRestaurants(search)
     }
 
     @PostMapping("/restaurants/create")
-    ResponseEntity<String> createRestaurant(@RequestBody Restaurant restaurant){
+    ResponseEntity<String> createRestaurant(@RequestBody Restaurant restaurant) {
         databaseService.addRestaurant(restaurant)
     }
 
     @PostMapping("/menus/create")
-    ResponseEntity<String> createMenu(@RequestBody Menu menu){
+    ResponseEntity<String> createMenu(@RequestBody Menu menu) {
         databaseService.addMenu(menu)
     }
 
     @PostMapping("/items/create")
-    ResponseEntity<String> createItem(@RequestBody Item item){
+    ResponseEntity<String> createItem(@RequestBody Item item) {
         databaseService.addItem(item)
     }
 
     @PostMapping("/dietary-restrictions/create")
-    ResponseEntity<String> createDietaryRestriction(@RequestBody DietaryRestriction dietaryRestriction){
+    ResponseEntity<String> createDietaryRestriction(@RequestBody DietaryRestriction dietaryRestriction) {
         databaseService.addDietaryRestriction(dietaryRestriction)
     }
 
     @PostMapping("/item-restrictions/create")
-    ResponseEntity<String> createItemRestriction(@RequestBody ItemRestriction itemRestriction){
+    ResponseEntity<String> createItemRestriction(@RequestBody ItemRestriction itemRestriction) {
         databaseService.addItemRestriction(itemRestriction)
     }
 }

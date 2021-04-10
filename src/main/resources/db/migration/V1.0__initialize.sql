@@ -6,7 +6,7 @@ create table menume.restaurant
     location varchar(1023) not null,
     logoUrl varchar(1023),
     websiteUrl varchar(1023),
-    costLevel varchar(15),
+    costLevelValue tinyint,
     foodCategory varchar(15),
     distance decimal,
     phoneNumber varchar(15),
