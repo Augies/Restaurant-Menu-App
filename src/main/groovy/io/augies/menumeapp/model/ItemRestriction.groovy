@@ -1,5 +1,7 @@
 package io.augies.menumeapp.model
 
+import groovy.transform.ToString
+
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -9,17 +11,18 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = 'ItemRestriction')
+@Table(name = 'itemrestriction')
+@ToString(includeNames = true)
 class ItemRestriction {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id
 
     @ManyToOne
     @JoinColumn(name = 'itemId', nullable = false)
-    Long itemId
+    Item item
 
     @ManyToOne
     @JoinColumn(name = 'dietaryRestrictionId', nullable = false)
-    Long dietaryId
+    DietaryRestriction dietaryRestriction
 }

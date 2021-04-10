@@ -1,7 +1,7 @@
 package io.augies.menumeapp.model.filtering
 
-class SpecItem<T>{
+class SearchCriteria {
     String field
-    T value
+    Object value
     FilterType filterType
 }
