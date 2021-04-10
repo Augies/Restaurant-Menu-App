@@ -50,6 +50,6 @@ class Restaurant {
     }
 
     enum FoodCategory {
-        CHINESE, BBQ, PIZZA, ITALIAN, MISCELLANEOUS, AMERICAN, MEXICAN
+        CHINESE, BBQ, PIZZA, ITALIAN, MISCELLANEOUS, AMERICAN, MEXICAN, THAI
     }
 }

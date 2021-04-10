@@ -51,74 +51,67 @@ class DatabaseService {
         return ResponseEntity.ok(restaurantList)
     }
 
+    ResponseEntity<List<Menu>> searchMenus(String search){
+        //TODO
+        if(!search) return getAllMenus()
+        return null
+    }
+
+    ResponseEntity<List<Item>> searchItems(String search){
+        //TODO
+        if(!search) return getAllItems()
+        return null
+    }
+
+    ResponseEntity<List<DietaryRestriction>> searchDietaryRestrictions(String search){
+        //TODO
+        if(!search) return getAllDietaryRestrictions()
+        return null
+    }
+
+    ResponseEntity<List<ItemRestriction>> searchItemRestrictions(String search){
+        //TODO
+        if(!search) return getAllItemRestrictions()
+        return null
+    }
+
     ResponseEntity<List<Restaurant>> getAllRestaurants() {
-        List<Restaurant> restaurantList = restaurantRepository.findAll()
+        List<Restaurant> restaurantList = restaurantRepository.findAll().collect({it})
         if (restaurantList.isEmpty()) {
             return ResponseEntity.notFound().build()
         }
         return ResponseEntity.ok(restaurantList)
     }
 
-    List<Menu> getAllMenus() {
-        return menuRepository.findAll()
-    }
-
-    List<Item> getAllItems() {
-        return itemRepository.findAll()
-    }
-
-    ResponseEntity<String> addRestaurant(Restaurant restaurant) {
-        try {
-            restaurantRepository.save(restaurant)
-            log.info("Saving restaurant: $restaurant")
-        } catch (RuntimeException e) {
-            log.error("An exception occurred while creating a restaurant: ", e)
-            return ResponseEntity.badRequest().body("Failed to create restaurant")
+    ResponseEntity<List<Menu>> getAllMenus() {
+        List<Menu> menuList = menuRepository.findAll()
+        if (menuList.isEmpty()) {
+            return ResponseEntity.notFound().build()
         }
-        return ResponseEntity.ok("Restaurant saved.")
+        return ResponseEntity.ok(menuList)
     }
 
-    ResponseEntity<String> addMenu(Menu menu) {
-        try {
-            menuRepository.save(menu)
-            log.info("Saving menu: $menu")
-        } catch (RuntimeException e) {
-            log.error("An exception occurred while creating a menu: ", e)
-            return ResponseEntity.badRequest().body("Failed to create Menu")
+    ResponseEntity<List<Item>> getAllItems() {
+        List<Item> itemList = itemRepository.findAll()
+        if (itemList.isEmpty()) {
+            return ResponseEntity.notFound().build()
         }
-        return ResponseEntity.ok("Menu saved.")
+        return ResponseEntity.ok(itemList)
     }
 
-    ResponseEntity<String> addItem(Item item) {
-        try {
-            itemRepository.save(item)
-            log.info("Saving item: $item")
-        } catch (RuntimeException e) {
-            log.error("An exception occurred while creating an item: ", e)
-            return ResponseEntity.badRequest().body("Failed to create Item")
+    ResponseEntity<List<DietaryRestriction>> getAllDietaryRestrictions(){
+        List<DietaryRestriction> dietaryRestrictionList = dietaryRestrictionRepository.findAll()
+        if(dietaryRestrictionList.isEmpty()){
+            return ResponseEntity.notFound().build()
         }
-        return ResponseEntity.ok("Item saved.")
+        return ResponseEntity.ok(dietaryRestrictionList)
     }
 
-    ResponseEntity<String> addDietaryRestriction(DietaryRestriction dietaryRestriction) {
-        try {
-            dietaryRestrictionRepository.save(dietaryRestriction)
-            log.info("Saving dietaryRestriction: $dietaryRestriction")
-        } catch (RuntimeException e) {
-            log.error("An exception occurred while creating a dietary restriction:", e)
-            return ResponseEntity.badRequest().body("Failed to create Dietary Restriction")
+    ResponseEntity<List<ItemRestriction>> getAllItemRestrictions(){
+        List<ItemRestriction> itemRestrictionList = itemRestrictionRepository.findAll()
+        if(itemRestrictionList.isEmpty()){
+            return ResponseEntity.notFound().build()
         }
-        return ResponseEntity.ok("Dietary Restriction saved.")
-    }
-
-    ResponseEntity<String> addItemRestriction(ItemRestriction itemRestriction) {
-        try {
-            itemRestrictionRepository.save(itemRestriction)
-            log.info("Saving item restriction: $itemRestriction")
-        } catch (RuntimeException e) {
-            log.error("An exception occurred while creating a item restriction:", e)
-            return ResponseEntity.badRequest().body("Failed to create Item Restriction")
-        }
-        return ResponseEntity.ok("Item Restriction saved.")
+        return ResponseEntity.ok(itemRestrictionList)
     }
 }
