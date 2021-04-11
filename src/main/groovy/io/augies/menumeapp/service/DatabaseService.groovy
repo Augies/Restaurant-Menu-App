@@ -78,20 +78,28 @@ class DatabaseService {
         if(distance) restaurants = restaurantRepository.findByRestaurantsByDistance(distance, restaurants)
         if(foodCategory) restaurants = restaurantRepository.findByRestaurantsByCategory(foodCategory, restaurants)
         if(mealTime) restaurants = restaurantRepository.findByRestaurantsByMealTime(mealTime, restaurants)
+        if(dietaryRestrictionIds || name || costLevel || distance || foodCategory || mealTime) {
+            for (restaurant in restaurants) {
+                for (int i = 0; i < restaurant.menus.size(); i++) {
+                    Menu menu = restaurant.menus[i]
+                    if(dietaryRestrictionIds){
+                        for (int j = 0; j < menu.items.size(); j++) { //for each item
+                            Item item = menu.items[j]
+                            if (Collections.disjoint(item.itemRestrictions, itemRestrictionRepository.findAllById(dietaryRestrictionIds))) {
+                                menu.items.remove(item)
+                                j--
+                            }
+                        }
+                        if (menu.items.isEmpty()) {
+                            restaurant.menus.remove(menu)
+                            i--
+                        }
 
-        for(restaurant in restaurants){
-            for(int i = 0; i < restaurant.menus.size(); i++){
-                Menu menu = restaurant.menus[i]
-                for(int j = 0; j < restaurant.menus[i].items.size(); j++){
-                    Item item = menu.items[j]
-                    if(dietaryRestrictionIds && Collections.disjoint(item.itemRestrictions,itemRestrictionRepository.findAllById(dietaryRestrictionIds))){
-                        menu.items.remove(item)
-                        j--
                     }
-                }
-                if(menu.items.isEmpty() || menu.mealTime!=mealTime){
-                    restaurant.menus.remove(menu)
-                    i--
+                    if(mealTime && menu.mealTime!=mealTime){
+                        restaurant.menus.remove(menu)
+                        i--
+                    }
                 }
             }
         }
